@@ -1,0 +1,6 @@
+Django==4.2
+djangorestframework==3.14.0
+psycopg2-binary==2.9.6  # Si vous utilisez PostgreSQL comme base de données
+pillow==10.0.0           # Pour le traitement d'images
+django-cors-headers==3.14.0  # Pour gérer les CORS
+django-environ==0.9.0   # Pour gérer les variables d'environnement

@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  django:
+    build:
+      context: .  # Répertoire de votre projet Django
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app  # Pour les changements de code à la volée
+    ports:
+      - "8000:8000"
