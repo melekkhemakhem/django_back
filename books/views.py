@@ -1,3 +1,4 @@
+from venv import logger
 from django.shortcuts import render
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView,UpdateAPIView, DestroyAPIView
 from .models import Book,Student
@@ -101,24 +102,27 @@ class ListImagesAPIView(ListAPIView):
 @csrf_exempt
 def studentApi(request, id=0):
     if request.method == 'GET':
-        student = Upload.objects.all()
-        student_serializer = ImageSerializer(student, many=True)
+        students = Upload.objects.all()
+        student_serializer = ImageSerializer(students, many=True)
         return JsonResponse(student_serializer.data, safe=False)
 
     elif request.method == 'POST':
-        # Utilisez FormParser et MultiPartParser pour gérer les fichiers
         data = request.POST
-        file = request.FILES.get('url')  # Récupérer l'image
+        file = request.FILES.get('url')
+
+        logger.info(f"Received data: {data}")
+        logger.info(f"Received file: {file}")
 
         upload_data = {
             'text': data['text'],
-            'url': file,  # Associez l'image au champ 'url'
+            'url': file,
         }
         student_serializer = ImageSerializer(data=upload_data)
 
         if student_serializer.is_valid():
             student_serializer.save()
             return JsonResponse("Added Successfully", safe=False)
+        logger.error("Failed to validate student data.")
         return JsonResponse("Failed to Add", safe=False)
 
     elif request.method == 'PUT':
@@ -129,18 +133,18 @@ def studentApi(request, id=0):
         if student_serializer.is_valid():
             student_serializer.save()
             return JsonResponse("Updated Successfully", safe=False)
-        return JsonResponse("Failed to Update")
+        return JsonResponse("Failed to Update", status=400)
 
     elif request.method == 'DELETE':
         if id == 0:
-            # Si aucun ID n'est spécifié, supprimer tous les enregistrements
+            # If no ID is specified, delete all records
             Upload.objects.all().delete()
             return JsonResponse("All Records Deleted Successfully", safe=False)
         else:
-            # Si un ID est spécifié, supprimer uniquement cet enregistrement
+            # If an ID is specified, delete only that record
             try:
                 student = Upload.objects.get(id=id)
                 student.delete()
                 return JsonResponse("Deleted Successfully", safe=False)
             except Upload.DoesNotExist:
-                return JsonResponse("Record Not Found", safe=False)
+                return JsonResponse("Record Not Found", status=404)
