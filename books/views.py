@@ -4,6 +4,7 @@ from .models import Book,Student
 from .serializer import BookSerializer,ImageSerializer
 from rest_framework import response,status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -131,6 +132,15 @@ def studentApi(request, id=0):
         return JsonResponse("Failed to Update")
 
     elif request.method == 'DELETE':
-        student = Upload.objects.get(id=id)
-        student.delete()
-        return JsonResponse("Deleted Successfully", safe=False)
+        if id == 0:
+            # Si aucun ID n'est spécifié, supprimer tous les enregistrements
+            Upload.objects.all().delete()
+            return JsonResponse("All Records Deleted Successfully", safe=False)
+        else:
+            # Si un ID est spécifié, supprimer uniquement cet enregistrement
+            try:
+                student = Upload.objects.get(id=id)
+                student.delete()
+                return JsonResponse("Deleted Successfully", safe=False)
+            except Upload.DoesNotExist:
+                return JsonResponse("Record Not Found", safe=False)

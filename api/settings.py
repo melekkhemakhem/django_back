@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-jv7&y9r*-im#n*tkvgs=y(_8z^bqk!a#p=59b2huk%tq0cktrx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['chronotope.vercel.app', 'www.chronotope.vercel.app', 'localhost', '127.0.0.1']
+
+
+DEBUG = True  # ou une valeur similaire
+
 
 
 # Application definition
