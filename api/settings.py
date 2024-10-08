@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-jv7&y9r*-im#n*tkvgs=y(_8z^bqk!a#p=59b2huk%tq0cktrx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1']
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'chronotope.vercel.app']
+
 
 
 DEBUG = True  # ou une valeur similaire
@@ -62,8 +63,10 @@ CORS_ALLOW_ALL_ORIGINS = True  # Cela autorise toutes les origines (pas recomman
 
 # Ou, pour limiter aux seules origines nécessaires :
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # L'URL de ton application Angular
+    "http://localhost:4200",  # Pour le développement local
+    "https://chronotope.vercel.app",  # Pour votre application déployée
 ]
+
 ROOT_URLCONF = 'api.urls'
 
 TEMPLATES = [
