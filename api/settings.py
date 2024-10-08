@@ -63,8 +63,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # Cela autorise toutes les origines (pas recomman
 
 # Ou, pour limiter aux seules origines nécessaires :
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-      "https://chronotope.vercel.app"  # L'URL de ton application Angular
+    "http://localhost:4200",  # L'URL de ton application Angular
 ]
 ROOT_URLCONF = 'api.urls'
 
