@@ -137,7 +137,18 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Configuration des fichiers médias
+MEDIA_URL = '/tmp/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'tmp/')
+
+# Assurez-vous que le répertoire existe
+if not os.path.exists(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
