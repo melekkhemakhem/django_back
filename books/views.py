@@ -109,30 +109,28 @@ def studentApi(request, id=0):
         return JsonResponse(student_serializer.data, safe=False)
 
     elif request.method == 'POST':
-        data = request.POST
-        file = request.FILES.get('url')
+     data = request.POST
+     file = request.FILES.get('url')
 
-        # Journaliser les données reçues
-        logger.info(f"Received data: {data}")
-        logger.info(f"Received file: {file}")
+     logger.info(f"Received data: {data}")
+     logger.info(f"Received file: {file}")
 
-        # Vérifier si la clé 'text' est présente dans les données
-        if 'text' not in data:
-            logger.error("Le champ 'text' est requis.")
-            return JsonResponse({'error': "Le champ 'text' est requis."}, status=400)
+     if 'text' not in data or not data['text']:
+        logger.error("Le champ 'text' est requis.")
+        return JsonResponse({'error': "Le champ 'text' est requis."}, status=400)
 
-        upload_data = {
-            'text': data['text'],
-            'url': file,
-        }
-        student_serializer = ImageSerializer(data=upload_data)
+     upload_data = {
+        'text': data['text'],
+        'url': file,
+     }
+     student_serializer = ImageSerializer(data=upload_data)
 
-        if student_serializer.is_valid():
-            student_serializer.save()
-            return JsonResponse({'message': "Ajouté avec succès"}, status=201)
-        
-        logger.error("Échec de la validation des données de l'étudiant.")
-        return JsonResponse({'error': "Échec de l'ajout"}, status=400)
+     if student_serializer.is_valid():
+        student_serializer.save()
+        return JsonResponse({'message': "Ajouté avec succès"}, status=201)
+    
+     logger.error("Échec de la validation des données de l'étudiant.")
+     return JsonResponse({'error': "Échec de l'ajout"}, status=400)
 
     elif request.method == 'PUT':
         student_data = JSONParser().parse(request)
