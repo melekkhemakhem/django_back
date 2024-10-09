@@ -1,3 +1,4 @@
+import logging
 from venv import logger
 from django.shortcuts import render
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView,UpdateAPIView, DestroyAPIView
@@ -98,8 +99,9 @@ class ListImagesAPIView(ListAPIView):
 # #             serializer.save()
 # #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 # #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
+# Configuration du logger
+logger = logging.getLogger(__name__)
+@csrf_exempt  # Utilise ce décorateur pour ignorer la protection CSRF si nécessaire
 def studentApi(request, id=0):
     if request.method == 'GET':
         students = Upload.objects.all()
@@ -110,8 +112,14 @@ def studentApi(request, id=0):
         data = request.POST
         file = request.FILES.get('url')
 
+        # Journaliser les données reçues
         logger.info(f"Received data: {data}")
         logger.info(f"Received file: {file}")
+
+        # Vérifier si la clé 'text' est présente dans les données
+        if 'text' not in data:
+            logger.error("Le champ 'text' est requis.")
+            return JsonResponse({'error': "Le champ 'text' est requis."}, status=400)
 
         upload_data = {
             'text': data['text'],
@@ -121,9 +129,10 @@ def studentApi(request, id=0):
 
         if student_serializer.is_valid():
             student_serializer.save()
-            return JsonResponse("Added Successfully", safe=False)
-        logger.error("Failed to validate student data.")
-        return JsonResponse("Failed to Add", safe=False)
+            return JsonResponse({'message': "Ajouté avec succès"}, status=201)
+        
+        logger.error("Échec de la validation des données de l'étudiant.")
+        return JsonResponse({'error': "Échec de l'ajout"}, status=400)
 
     elif request.method == 'PUT':
         student_data = JSONParser().parse(request)
@@ -132,19 +141,20 @@ def studentApi(request, id=0):
 
         if student_serializer.is_valid():
             student_serializer.save()
-            return JsonResponse("Updated Successfully", safe=False)
-        return JsonResponse("Failed to Update", status=400)
+            return JsonResponse({'message': "Mise à jour réussie"}, status=200)
+        
+        return JsonResponse({'error': "Échec de la mise à jour"}, status=400)
 
     elif request.method == 'DELETE':
         if id == 0:
-            # If no ID is specified, delete all records
+            # Si aucun ID n'est spécifié, supprimer tous les enregistrements
             Upload.objects.all().delete()
-            return JsonResponse("All Records Deleted Successfully", safe=False)
+            return JsonResponse({'message': "Tous les enregistrements supprimés avec succès"}, status=200)
         else:
-            # If an ID is specified, delete only that record
+            # Si un ID est spécifié, supprimer seulement cet enregistrement
             try:
                 student = Upload.objects.get(id=id)
                 student.delete()
-                return JsonResponse("Deleted Successfully", safe=False)
+                return JsonResponse({'message': "Supprimé avec succès"}, status=200)
             except Upload.DoesNotExist:
-                return JsonResponse("Record Not Found", status=404)
+                return JsonResponse({'error': "Enregistrement non trouvé"}, status=404)
